@@ -4,15 +4,17 @@ const { SETTINGS_PATH } = require('./constans');
 module.exports = (dir, useTypeScript) => {
   const src = `./${dir}/src`;
   
-  fs.mkdirsSync(src);
+  fs.copySync(`${SETTINGS_PATH}/src`, src);
 
-  const files = useTypeScript ? [
-    fs.copy(`${SETTINGS_PATH}/index.ts`, `${src}/index.ts`),
-    fs.copy(`${SETTINGS_PATH}/hello.ts`, `${src}/hello.ts`)
+  const promises = useTypeScript ? [
+    fs.remove(`${src}/index.js`),
+    fs.remove(`${src}/hello.js`)
   ] : [
-    fs.copy(`${SETTINGS_PATH}/index.js`, `${src}/index.js`),
-    fs.copy(`${SETTINGS_PATH}/hello.js`, `${src}/hello.js`)
-  ]
+    fs.remove(`${src}/index.ts`),
+    fs.remove(`${src}/hello.ts`)
+  ];
 
-  return Promise.all(files);
+  return Promise.all(promises).catch((err) => {
+    console.log(err);
+  });
 };

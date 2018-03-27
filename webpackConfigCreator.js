@@ -8,7 +8,7 @@ const ruleOfTs = `{ test: /\.tsx?$/, use: 'awesome-typescript-loader', exclude: 
 
 module.exports = (dir, useTypeScript) => {
   const rules = useTypeScript === true ? ruleOfTs : ruleOfBabel;
-  const extensions = useTypeScript === true ? `'ts', 'tsx'` : `'js', 'jsx'`;
+  const extensions = useTypeScript === true ? `'.ts', '.tsx'` : `'.js', '.jsx'`;
   const conifg = `const path = require('path');
 const webpack = require('webpack');
 

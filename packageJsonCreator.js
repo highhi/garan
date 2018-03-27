@@ -8,13 +8,22 @@ const DEV_PACKAGES = [
   '@babel/plugin-proposal-class-properties',
   '@babel/plugin-proposal-object-rest-spread',
   '@babel/preset-env',
-  'babel-loader',
   'webpack',
+  'webpack-cli'
 ];
 
-const BasePackageJson = { name: '', version: '0.0.1', license: 'MIT' };
+const BasePackageJson = {
+  name: '',
+  version: '0.0.1', 
+  license: 'MIT',
+  scripts: {
+    start: 'webpack -w'
+  }
+};
 const dependencies = {};
-const devDependencies = {};
+const devDependencies = {
+  "babel-loader": "8.0.0-beta.2"
+};
 
 module.exports = (dir, useTypeScript) => {
   const pkgs = !useTypeScript ? DEV_PACKAGES : DEV_PACKAGES.concat([

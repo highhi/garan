@@ -18,15 +18,18 @@ module.exports = (input, flags) => {
 
   const promises = [
     fs.copy(`${SETTINGS_PATH}/.babelrc`, `./${flags.dir}/.babelrc`),
-    fs.copy(`${SETTINGS_PATH}/tsconfig.json`, `./${flags.dir}/tsconfig.json`),
     webpackConfigCreator(flags.dir, flags.typescript),
     packageJsonCreator(flags.dir, flags.typescript),
     srcDirCreator(flags.dir, flags.typescript)
   ];
 
+  if (flags.typescript) {
+    process.push(fs.copy(`${SETTINGS_PATH}/tsconfig.json`, `./${flags.dir}/tsconfig.json`));
+  }
+
   Promise.all(promises).then(() => {
     spinner.stop();
-    console.log('compleated');
+    console.log('🎉  Compleated!!');
   }).catch(err => {
     spinner.stop();
     console.log(err);

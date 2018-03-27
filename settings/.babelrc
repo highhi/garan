@@ -1,12 +1,15 @@
 {
   "presets": [
-    ["env", { 
-      "targets": { "browsers": ["last 2 versions", "safari >= 8"] },
-      "module": false
+    ["@babel/preset-env", {
+      "useBuiltIns": false,
+      "targets": {
+        "browsers": ["last 2 versions", "ie >= 11"],
+        "module": false
+      }
     }]
   ],
   "plugins": [
-    "transform-class-properties",
-    "transform-object-rest-spread"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread"
   ]
 }
