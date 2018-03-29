@@ -1,0 +1,31 @@
+const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+  mode: 'development',
+
+  entry: {
+    index: './src/index.js',
+  },
+
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, './dist'),
+  },
+
+  module: {
+    rules: [
+      <%_ if (useTs) { _%>
+      { test: /\.tsx?$/, use: 'awesome-typescript-loader', exclude: /node_modlues/ },
+      <%_ } else { _%>
+      { test: /\.js?$/, use: 'babel-loader', exclude: /node_modeules/ },
+      <%_ } _%>
+    ]
+  },
+
+  plugins: [],
+
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+};
