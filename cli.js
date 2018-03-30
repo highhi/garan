@@ -31,7 +31,11 @@ const useTs = flags.typescript;
 const TEMPLATE_PATH = path.resolve(__dirname, 'templates');
 
 function loadTemplateFiles() {
-  const base = [fs.copy(`${TEMPLATE_PATH}/.babelrc`, `${dir}/.babelrc`)];
+  const base = [
+    fs.copy(`${TEMPLATE_PATH}/.babelrc`, `${dir}/.babelrc`),
+    fs.copy(`${TEMPLATE_PATH}/index.html`, `${dir}/index.html`),
+  ];
+
   const files = useTs ? [
     fs.copy(`${TEMPLATE_PATH}/tsconfig.json`, `${dir}/tsconfing.json`),
     fs.copy(`${TEMPLATE_PATH}/index.ts`, `${dir}/src/index.ts`),
@@ -65,8 +69,9 @@ function createPackagejson() {
       '@babel/preset-env': '7.0.0-beta.42',
       'webpack': '^4.4.0',
       'webpack-cli': '^2.0.13',
+      'webpack-serve': '^0.3.0',
       'babel-loader': "8.0.0-beta.2",
-      'typescripot': '^2.9.0',
+      'typescript': '^2.9.0',
     },
   };
 
@@ -75,7 +80,7 @@ function createPackagejson() {
       ...base.devDependencies,
       'typescripot': '^2.9.0',
       'awesome-typescript-loader': '^5.0.0-1',
-    }
+    },
   }) : base;
 
   return fs.writeJson(`${dir}/package.json`, pkg, { spaces: 2 }).then(() => {
@@ -97,13 +102,14 @@ function createWebpackConfig() {
 fs.mkdirsSync(dir);
 fs.mkdirsSync(`${dir}/src`);
 
-Promise.all([
-  ...loadTemplateFiles(),
-  createPackagejson(),
-  createWebpackConfig(),
-]).then(() => {
-  console.log('Compleated!!');
-}).catch(err => {
-  console.log(err);
-})
+(async () => {
+  try {
+    await Promise.all([...loadTemplateFiles(), createPackagejson(), createWebpackConfig()]);
+    console.log('Compleated!!');
+    process.exit(0);
+  } catch(err) {
+    console.log(err);
+    process.exit(1);
+  }
+})();
 
