@@ -9,17 +9,18 @@ const util = require('util');
 const options = {
   flags: {
     dir: { type: 'string', alias: 'd' },
-    typescript: { type: 'boolean', alias: 't', default: false }
+    typescript: { type: 'boolean', alias: 't', default: false },
+    port: { type: 'string', alias: 'p', default: '3030' }
   }
 };
 
 const { flags } = meow(`
   Usage
-  $ gran --dir <source>
+  $ gran --dir <dir-name>
 
   Options
-  -a, --add         Create new template file
-  -o, --overwrite   Overwrite by template
+  -t, --typescript  Use typescript
+  -p, --port        Port number, default 3030
 `, options);
 
 if (!flags.dir) {
@@ -33,7 +34,7 @@ const TEMPLATE_PATH = path.resolve(__dirname, 'templates');
 function loadTemplateFiles() {
   const base = [
     fs.copy(`${TEMPLATE_PATH}/.babelrc`, `${dir}/.babelrc`),
-    fs.copy(`${TEMPLATE_PATH}/index.html`, `${dir}/index.html`),
+    fs.copy(`${TEMPLATE_PATH}/index.html`, `${dir}/public/index.html`),
   ];
 
   const files = useTs ? [
@@ -60,7 +61,7 @@ function createPackagejson() {
     license: 'MIT',
     private: true,
     scripts: {
-      server: `python -m SimpleHTTPServer ${flags.port || 3000}`
+      start: 'webpack-dev-server'
     },
     devDependencies: {
       '@babel/core': '7.0.0-beta.42',
@@ -69,16 +70,15 @@ function createPackagejson() {
       '@babel/preset-env': '7.0.0-beta.42',
       'webpack': '^4.4.0',
       'webpack-cli': '^2.0.13',
-      'webpack-serve': '^0.3.0',
+      "webpack-dev-server": "^3.1.1",
       'babel-loader': "8.0.0-beta.2",
-      'typescript': '^2.9.0',
     },
   };
 
   const pkg = useTs ? Object.assign({}, base, {
     devDependencies: {
       ...base.devDependencies,
-      'typescripot': '^2.9.0',
+      'typescripot': '^2.8.0',
       'awesome-typescript-loader': '^5.0.0-1',
     },
   }) : base;
@@ -92,15 +92,15 @@ function createPackagejson() {
 
 function createWebpackConfig() {
   const render = loadTemplateOfEjs('webpack.config.js.ejs');
-  return fs.writeFile(`${dir}/webpack.config.js`, render({ useTs })).then(() => {
+  return fs.writeFile(`${dir}/webpack.config.js`, render({ useTs: useTs, port: flags.port })).then(() => {
     console.log('Created webpack.config.js');
   }).catch(err => {
     console.log(err);
   });
 }
 
-fs.mkdirsSync(dir);
 fs.mkdirsSync(`${dir}/src`);
+fs.mkdirsSync(`${dir}/public`);
 
 (async () => {
   try {
