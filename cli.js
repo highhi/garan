@@ -78,7 +78,7 @@ function createPackagejson() {
   const pkg = useTs ? Object.assign({}, base, {
     devDependencies: {
       ...base.devDependencies,
-      'typescripot': '^2.8.0',
+      'typescript': '^2.8.0',
       'awesome-typescript-loader': '^5.0.0-1',
     },
   }) : base;
